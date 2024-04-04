@@ -28,8 +28,8 @@
      input logic [1:0] wbsel,
      input logic regwen,
      input logic [1:0] immsel,
-     input logic asel,
-     input logic bsel,
+     input logic [1:0] asel, // a_sel have now 3 choices therefore 2^2 wires
+     input logic [1:0] bsel, // b_sel have now 3 choices therefore 2^2 wires
      input logic [3:0] alusel,
      input logic mdrwrite,
      
@@ -125,11 +125,25 @@
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_a;
- assign alu_a = (asel == ALUA_REG) ? a : pcc;
+ // assign alu_a = (asel == ALUA_REG) ? a : pcc;
+ always_comb begin
+    case (asel)
+      ALUA_PCC: alu_a = pcc;
+      ALUA_REG: alu_a = a;
+      ALUA_OUT: alu_a = aluout;
+      default: alu_a = a;
+ end
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_b;
- assign alu_b = (bsel == ALUB_REG) ? b : imm;
+ // assign alu_b = (bsel == ALUB_REG) ? b : imm;
+always_comb
+    case (bsel)
+        ALUB_IMM: alu_b = imm;
+        ALUB_REG: alu_b = b;
+        ALUB_CONST_FF: alu_b = 32'b1111_1111_1111_1111_1111_1111_1111_1111;
+    default: alu_b = b; /* default */;
+    endcase
 
  // For signed comparison, cast to integer. logic is by default unsigned
  integer alu_as;
