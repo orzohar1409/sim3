@@ -146,16 +146,13 @@ sm_type current,next;
             alusel      = ALU_ADD;
         end
         LSW_ADDR: begin
-            casex(opcode_funct3)
-                LW: immsel = IMM_L;
-                SW: immsel = IMM_S;
-                ADDI: immsel = IMM_L;
-            endcase
+            immsel      = (opcode_funct3 == SW) ? IMM_S : IMM_L;
             asel        = ALUA_REG;
             bsel        = ALUB_IMM;
             alusel      = ALU_ADD;
         end
-        XADDI: // the new state
+        XADDI: begin // the new state
+            immsel  = IMM_L;
             asel = ALUA_OUT;
             bsel = ALUB_CONST_FF;
             alusel = ALU_XOR;

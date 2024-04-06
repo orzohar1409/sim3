@@ -141,7 +141,7 @@ always_comb
     case (bsel)
         ALUB_IMM: alu_b = imm;
         ALUB_REG: alu_b = b;
-        ALUB_CONST_FF: alu_b = 32'b1111_1111_1111_1111_1111_1111_1111_1111;
+        ALUB_CONST_FF: alu_b = {32{1'b1}};
     default: alu_b = b; /* default */;
     endcase
 
